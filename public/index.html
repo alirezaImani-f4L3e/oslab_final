@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>اطلاعات سیستم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center" dir="rtl" lang="fa">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-xl">
+        <h1 class="text-2xl font-bold text-center mb-4">اطلاعات سیستم</h1>
+        <div class="space-y-4">
+            <!-- Dropdown 1 -->
+            <div>
+                <label for="dropdown1" class="block text-gray-700 font-medium mb-1">اطلاعات پایه سیستم</label>
+                <select id="dropdown1" class="w-full p-2 border rounded-lg" onchange="updateText(event)">
+          <option value="" selected>انتخاب کنید</option>
+          <option value="cpu_info"> اطلاعات کلی پردازنده</option>
+          <option value="os_info">نام و نسخه سیستم عامل و هسته</option>
+          <option value="gcc_info">نسخه کامل gcc</option>
+          <option value="load_info">زمان روشن بودن و لود سیستم</option>
+          <option value="process_count">تعداد فرایند های فعال</option>
+          <option value="top_10_processes">ده فرایند با بیشترین مصرف حافظه</option>
+
+        </select>
+            </div>
+            <!-- Dropdown 2 -->
+            <div>
+                <label for="dropdown2" class="block text-gray-700 font-medium mb-1">اطلاعات امنیتی سیستم</label>
+                <select id="dropdown2" class="w-full p-2 border rounded-lg" onchange="updateText(event)">
+          <option value="" selected>انتخاب کنید</option>
+          <option value="users_info">نمایش کاربران فعال</option>
+          <option value="groups_info">نمایش گروه های سیستم</option>
+          <option value="services_info">نمایش سرویس های فعال</option>
+          <option value="installed_apps">نمایش نرم افزار های نصب شده</option>
+        </select>
+            </div>
+            <!-- Dropdown 3 -->
+            <div>
+                <label for="dropdown3" class="block text-gray-700 font-medium mb-1">اطلاعات سخت افزاری سیستم</label>
+                <select id="dropdown3" class="w-full p-2 border rounded-lg" onchange="updateText(event)">
+          <option value="" selected>انتخاب کنید</option>
+          <option value="processor_info">پردازنده و جزییات آن</option>
+          <option value="memory_info">حافظه</option>
+          <option value="network_cards_info">کارت های شبکه</option>
+          <option value="displays_info">صفحه نمایش های متصل به سیستم</option>
+        </select>
+            </div>
+        </div>
+        <!-- Text Box -->
+        <div class="mt-6">
+            <label for="output" class="block text-gray-700 font-medium mb-1">خروجی</label>
+            <textarea dir="ltr" rows="10" id="output" class="w-full p-2 border rounded-lg bg-gray-100" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        const dropDowns = ["dropdown1", "dropdown2", "dropdown3"]
+
+        function updateText(event) {
+            clearDropDowns(event)
+            const parameters = new URLSearchParams();
+
+            if (event.target.value) {
+                parameters.append("section", event.target.value);
+
+                fetch(`http://localhost:3000/api?${parameters.toString()}`).then(response => {
+                    return response.text();
+                }).then(res => {
+                    document.getElementById("output").value = res;
+                }).catch(error => {
+                    console.log(error)
+                })
+            }else{
+              document.getElementById("output").value = "";
+            }
+        }
+
+        function clearDropDowns(event) {
+            dropDowns.filter(item => item != event.target.id).forEach(item => {
+                document.getElementById(item).value = "";
+            })
+        }
+    </script>
+</body>
+
+</html>
